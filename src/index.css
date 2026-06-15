@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Playfair Display", serif;
+  --font-body: "DM Sans", sans-serif;
+  --font-mono: "Chivo Mono", monospace;
+
+  --color-bg-dark: #080808;
+  --color-bg-light: #DDDED8;
+  --color-accent: #C0C742;
+  
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+}
+
+@layer base {
+  body {
+    @apply bg-bg-dark text-bg-light font-body antialiased;
+  }
+
+  /* Specific handling for Playfair Display italics if needed */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-normal;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+
+
