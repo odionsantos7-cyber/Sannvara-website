@@ -1,0 +1,91 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Global Helpers
+    function isValidId(id) { 
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); 
+    }
+    
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    function isSignedIn() { return request.auth != null; }
+    
+    // Bootstrapped Admin
+    function isAdmin() { 
+      return isSignedIn() && 
+             request.auth.token.email_verified == true && 
+             request.auth.token.email == 'odionsantos7@gmail.com'; 
+    }
+
+    // Validation Helpers
+    function isValidProject(data) {
+      return data.keys().hasAll(['title', 'category', 'discipline', 'sector', 'year', 'image', 'aspectRatio', 'span', 'location', 'createdAt', 'updatedAt']) 
+             && data.keys().size() == 11
+             && data.title is string && data.title.size() <= 200 && data.title.size() > 0
+             && data.category is string && data.category.size() <= 100
+             && data.discipline is string && data.discipline.size() <= 100
+             && data.sector is string && data.sector.size() <= 100
+             && data.year is string && data.year.size() <= 10
+             && data.image is string && data.image.size() <= 500
+             && data.aspectRatio is string && data.aspectRatio.size() <= 50
+             && data.span is string && data.span.size() <= 20
+             && data.location is string && data.location.size() <= 100
+             && data.createdAt is timestamp
+             && data.updatedAt is timestamp;
+    }
+
+    function isValidInsight(data) {
+      return data.keys().hasAll(['category', 'date', 'title', 'description', 'readTime', 'image', 'createdAt', 'updatedAt'])
+             && data.keys().size() == 8
+             && data.category is string && data.category.size() <= 100
+             && data.date is string && data.date.size() <= 50
+             && data.title is string && data.title.size() <= 200 && data.title.size() > 0
+             && data.description is string && data.description.size() <= 2000
+             && data.readTime is string && data.readTime.size() <= 50
+             && data.image is string && data.image.size() <= 500
+             && data.createdAt is timestamp
+             && data.updatedAt is timestamp;
+    }
+
+    match /projects/{projectId} {
+      allow list, get: if isValidId(projectId) || true; // Allow public read
+      
+      allow create: if isAdmin() 
+                    && isValidId(projectId)
+                    && isValidProject(incoming())
+                    && incoming().createdAt == request.time
+                    && incoming().updatedAt == request.time;
+                    
+      allow update: if isAdmin()
+                    && isValidId(projectId)
+                    && isValidProject(incoming())
+                    && incoming().createdAt == existing().createdAt
+                    && incoming().updatedAt == request.time;
+                    
+      allow delete: if isAdmin() && isValidId(projectId);
+    }
+
+    match /insights/{insightId} {
+      allow list, get: if isValidId(insightId) || true; // Allow public read
+      
+      allow create: if isAdmin() 
+                    && isValidId(insightId)
+                    && isValidInsight(incoming())
+                    && incoming().createdAt == request.time
+                    && incoming().updatedAt == request.time;
+                    
+      allow update: if isAdmin()
+                    && isValidId(insightId)
+                    && isValidInsight(incoming())
+                    && incoming().createdAt == existing().createdAt
+                    && incoming().updatedAt == request.time;
+                    
+      allow delete: if isAdmin() && isValidId(insightId);
+    }
+  }
+}
