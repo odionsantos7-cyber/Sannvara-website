@@ -1,0 +1,79 @@
+{
+  "entities": {
+    "project": {
+      "title": "Project",
+      "description": "Sannvara design and consultancy project",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "discipline": { "type": "string" },
+        "sector": { "type": "string" },
+        "year": { "type": "string" },
+        "image": { "type": "string" },
+        "aspectRatio": { "type": "string" },
+        "span": { "type": "string" },
+        "location": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "category", "discipline", "sector", "year", "image", "aspectRatio", "span", "location", "createdAt", "updatedAt"]
+    },
+    "insight": {
+      "title": "Insight",
+      "description": "Sannvara Gather insight article",
+      "type": "object",
+      "properties": {
+        "category": { "type": "string" },
+        "date": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "readTime": { "type": "string" },
+        "image": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["category", "date", "title", "description", "readTime", "image", "createdAt", "updatedAt"]
+    },
+    "guardian": {
+      "title": "Guardian",
+      "description": "Sannvara Studio team member / guardian",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "image": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "role", "image", "createdAt", "updatedAt"]
+    },
+    "setting": {
+      "title": "Setting",
+      "description": "Sannvara custom settings and configuration",
+      "type": "object",
+      "properties": {
+        "image": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  },
+  "firestore": {
+    "/projects/{projectId}": {
+      "schema": "project",
+      "description": "All Sannvara work showcase projects"
+    },
+    "/insights/{insightId}": {
+      "schema": "insight",
+      "description": "All Sannvara Gather publications/insights"
+    },
+    "/settings/{settingId}": {
+      "schema": "setting",
+      "description": "Application settings (e.g. process page empty canvas frame configuration)"
+    },
+    "/guardians/{guardianId}": {
+      "schema": "guardian",
+      "description": "Sannvara Studio team members or guardians managed via CMS"
+    }
+  }
+}

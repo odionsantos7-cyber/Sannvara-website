@@ -52,8 +52,19 @@ service cloud.firestore {
              && data.updatedAt is timestamp;
     }
 
+    function isValidGuardian(data) {
+      return data.keys().hasAll(['name', 'role', 'image', 'createdAt', 'updatedAt'])
+             && data.keys().size() == 5
+             && data.name is string && data.name.size() <= 200 && data.name.size() > 0
+             && data.role is string && data.role.size() <= 200 && data.role.size() > 0
+             && data.image is string && data.image.size() <= 500
+             && data.createdAt is timestamp
+             && data.updatedAt is timestamp;
+    }
+
     match /projects/{projectId} {
-      allow list, get: if isValidId(projectId) || true; // Allow public read
+      allow list: if true;
+      allow get: if isValidId(projectId);
       
       allow create: if isAdmin() 
                     && isValidId(projectId)
@@ -71,7 +82,8 @@ service cloud.firestore {
     }
 
     match /insights/{insightId} {
-      allow list, get: if isValidId(insightId) || true; // Allow public read
+      allow list: if true;
+      allow get: if isValidId(insightId);
       
       allow create: if isAdmin() 
                     && isValidId(insightId)
@@ -86,6 +98,35 @@ service cloud.firestore {
                     && incoming().updatedAt == request.time;
                     
       allow delete: if isAdmin() && isValidId(insightId);
+    }
+
+    match /settings/{settingId} {
+      allow list: if true;
+      allow get: if isValidId(settingId);
+      
+      allow create, update: if isAdmin() 
+                            && isValidId(settingId);
+                            
+      allow delete: if isAdmin() && isValidId(settingId);
+    }
+
+    match /guardians/{guardianId} {
+      allow list: if true;
+      allow get: if isValidId(guardianId);
+      
+      allow create: if isAdmin() 
+                    && isValidId(guardianId)
+                    && isValidGuardian(incoming())
+                    && incoming().createdAt == request.time
+                    && incoming().updatedAt == request.time;
+                    
+      allow update: if isAdmin()
+                    && isValidId(guardianId)
+                    && isValidGuardian(incoming())
+                    && incoming().createdAt == existing().createdAt
+                    && incoming().updatedAt == request.time;
+                    
+      allow delete: if isAdmin() && isValidId(guardianId);
     }
   }
 }

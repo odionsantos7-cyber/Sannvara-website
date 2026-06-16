@@ -52,7 +52,7 @@ function getTransporter() {
 
 // Universal Email Dispatcher (supporting HTTP APIs to bypass Cloud Run/sandbox SMTP port blocks)
 async function dispatchNotificationEmail({ subject, text }: { subject: string; text: string }) {
-  const targetEmail = 'workwithsannvara@gmail.com';
+  const targetEmail = 'hello@sannvara.com';
   
   // 1. Try Resend API (HTTP REST API on Port 443 - 100% reliable in firewalled/sandbox environments)
   if (process.env.RESEND_API_KEY) {
@@ -354,11 +354,11 @@ Joined: ${newSubscription.date}`
 
   app.post('/api/admin/test-smtp', async (req, res) => {
     try {
-      const targetUser = 'workwithsannvara@gmail.com';
+      const targetUser = 'hello@sannvara.com';
       const result = await dispatchNotificationEmail({
         subject: `Sannvara Email Diagnostic Success ✦`,
         text: `Your Website Email Dispatcher is working perfectly!
-        
+         
 This test email verifies that your contact/inquiry forms and newsletter submissions will correctly deliver notification alerts to ${targetUser}.
 
 Active Configuration Details:
@@ -371,7 +371,7 @@ Active Configuration Details:
 
       res.json({ 
         success: true, 
-        message: `Connection holds! Diagnostic email dispatched successfully via ${result.provider} to workwithsannvara@gmail.com.` 
+        message: `Connection holds! Diagnostic email dispatched successfully via ${result.provider} to hello@sannvara.com.` 
       });
     } catch (error: any) {
       console.error('Email test failed:', error);
